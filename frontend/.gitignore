@@ -7,10 +7,23 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node / Frontend
 node_modules
 dist
 dist-ssr
 *.local
+
+# Python / Backend
+venv/
+ENV/
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+instance/
+*.db
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +35,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Testing / Coverage
+.coverage
+htmlcov/
+.pytest_cache/

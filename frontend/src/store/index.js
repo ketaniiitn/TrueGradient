@@ -6,7 +6,3 @@ export const store = configureStore({
     auth: authReducer,
   },
 });
-
-// Export types for TypeScript usage (if needed)
-// export type RootState = ReturnType<typeof store.getState>;
-// export type AppDispatch = typeof store.dispatch;

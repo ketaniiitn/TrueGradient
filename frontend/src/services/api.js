@@ -18,6 +18,20 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Response interceptor to handle token expiration
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/signin';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const apiService = {
   // Health check
   healthCheck: () => api.get('/health'),
@@ -25,9 +39,65 @@ export const apiService = {
   // Test connection
   testConnection: () => api.get('/api/test'),
   
-  // Authentication (to be implemented)
-  // login: (credentials) => api.post('/api/auth/login', credentials),
-  // register: (userData) => api.post('/api/auth/register', userData),
+  // Authentication endpoints
+  auth: {
+    login: async (credentials) => {
+      try {
+        const response = await api.post('/api/auth/login', credentials);
+        const { access_token, user } = response.data;
+        
+        // Store token and user data
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        return response.data;
+      } catch (error) {
+        const errorMessage = error.response?.data?.error || 'Login failed';
+        throw new Error(errorMessage);
+      }
+    },
+    
+    register: async (userData) => {
+      try {
+        const response = await api.post('/api/auth/register', userData);
+        const { access_token, user } = response.data;
+        
+        // Store token and user data
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        return response.data;
+      } catch (error) {
+        const errorMessage = error.response?.data?.error || 'Registration failed';
+        throw new Error(errorMessage);
+      }
+    },
+    
+    logout: async () => {
+      try {
+        await api.post('/api/auth/logout');
+      } catch (error) {
+        console.error('Logout error:', error);
+      } finally {
+        // Always clear local storage
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    },
+    
+    getProfile: () => api.get('/api/auth/profile'),
+    
+    // Helper functions
+    getToken: () => localStorage.getItem('token'),
+    getUser: () => {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : null;
+    },
+    isAuthenticated: () => {
+      const token = localStorage.getItem('token');
+      return !!token;
+    },
+  },
 };
 
 export default api;

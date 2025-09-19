@@ -1,29 +1,49 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-import os
 
-app = Flask(__name__)
-CORS(app)
+from config import get_config
+from extensions import init_extensions
+from routes.auth.routes import auth_bp
+from models.user import create_indexes
 
-# Configuration
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
-@app.route('/health', methods=['GET'])
-def health_check():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'message': 'TrueGradient Backend is running',
-        'version': '1.0.0'
-    }), 200
+def create_app():
+    app = Flask(__name__)
+    CORS(app)
 
-@app.route('/api/test', methods=['GET'])
-def test_connection():
-    """Test connection endpoint"""
-    return jsonify({
-        'message': 'Backend connection successful',
-        'data': 'Hello from Flask!'
-    }), 200
+    # Load configuration
+    cfg = get_config()
+    app.config.from_object(cfg)
+
+    # Initialize extensions (Mongo, JWT)
+    init_extensions(app)
+
+    # Ensure indexes
+    with app.app_context():
+        create_indexes()
+
+    # Register blueprints
+    app.register_blueprint(auth_bp)
+
+    # Basic routes
+    @app.route('/health', methods=['GET'])
+    def health_check():
+        return jsonify({
+            'status': 'healthy',
+            'message': 'TrueGradient Backend is running',
+            'version': '1.0.0'
+        }), 200
+
+    @app.route('/api/test', methods=['GET'])
+    def test_connection():
+        return jsonify({
+            'message': 'Backend connection successful',
+            'data': 'Hello from Flask!'
+        }), 200
+
+    return app
+
 
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    application = create_app()
+    application.run(host='127.0.0.1', port=5000, debug=application.config.get('DEBUG', False))
