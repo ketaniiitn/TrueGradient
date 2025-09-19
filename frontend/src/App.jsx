@@ -1,7 +1,13 @@
-export default function App() {
+import ConnectionTest from './components/ConnectionTest'
+
+function App() {
   return (
-    <h1 className="text-3xl font-bold underline bg-blue-300 justify-center flex items-center h-screen">
-      Hello world!
-    </h1>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="w-full max-w-md p-6 bg-white rounded-2xl shadow-lg">
+        <ConnectionTest />
+      </div>
+    </div>
   )
 }
+
+export default App
