@@ -9,7 +9,9 @@ from models.user import create_indexes
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    # Permissive CORS for deployment: allow all origins and common methods.
+    # Be cautious: in production you may want to restrict origins and enable credentials safely.
+    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True, methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
 
     # Load configuration
     cfg = get_config()
