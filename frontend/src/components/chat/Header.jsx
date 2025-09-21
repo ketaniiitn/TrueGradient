@@ -1,38 +1,75 @@
-import { Bell, Link, ChevronDown, User } from "lucide-react";
+import { useState, useRef, useEffect } from 'react';
+import { Link, ChevronDown, User } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '../../store/slices/authSlice';
+import NotificationsPanel from './NotificationsPanel';
+import AdminPanel from './AdminPanel';
 
-export default function Header({ className = "" }) {
-  return (
-    <header className={`flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 ${className}`}>
-      {/* Left side - Logo */}
-      <div className="flex items-center">
-        <h1 className="text-xl font-semibold text-gray-900">AI Chat</h1>
-      </div>
+export default function Header({ className = '' }) {
+	const [menuOpen, setMenuOpen] = useState(false);
+	const menuRef = useRef(null);
+	const triggerRef = useRef(null);
+	const dispatch = useDispatch();
 
-      {/* Right side - Actions */}
-      <div className="flex items-center gap-4">
-        {/* Link with count */}
-        <div className="flex items-center gap-2 text-blue-600">
-          <Link size={18} />
-          <span className="text-sm font-medium">1,249</span>
-        </div>
+	useEffect(() => {
+		if (!menuOpen) return;
+		const handler = (e) => {
+			if (
+				menuRef.current &&
+				!menuRef.current.contains(e.target) &&
+				triggerRef.current &&
+				!triggerRef.current.contains(e.target)
+			) {
+				setMenuOpen(false);
+			}
+		};
+		document.addEventListener('mousedown', handler);
+		document.addEventListener('touchstart', handler);
+		return () => {
+			document.removeEventListener('mousedown', handler);
+			document.removeEventListener('touchstart', handler);
+		};
+	}, [menuOpen]);
 
-        {/* Notification bell */}
-        <div className="relative">
-          <Bell size={20} className="text-gray-600" />
-          <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-            1
-          </span>
-        </div>
+	const handleLogout = async () => {
+		try {
+			await dispatch(logoutUser()).unwrap();
+		} catch (_) {
+			/* ignore */
+		}
+		window.location.href = '/signin';
+	};
 
-        {/* Admin dropdown */}
-        <div className="flex items-center gap-2 cursor-pointer">
-          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-            <User size={16} className="text-white" />
-          </div>
-          <span className="text-sm font-medium text-gray-900">Admin</span>
-          <ChevronDown size={16} className="text-gray-600" />
-        </div>
-      </div>
-    </header>
-  )
+	return (
+		<header className={`flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 ${className}`}>
+			<div className="flex items-center">
+				<h1 className="text-lg font-semibold text-gray-900">AI Chat</h1>
+			</div>
+
+			<div className="flex items-center gap-4">
+				<div className="flex items-center gap-2 bg-blue-50 text-blue-600 rounded-full px-4 py-1.5 shadow-sm">
+					<Link size={18} strokeWidth={2} />
+					<span className="text-sm font-medium">1,250</span>
+				</div>
+
+				<NotificationsPanel />
+
+				<button
+					ref={triggerRef}
+					onClick={() => setMenuOpen((o) => !o)}
+					className={`flex items-center gap-2 rounded-full pl-1 pr-2 py-1 transition-all border border-transparent hover:border-blue-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+					aria-haspopup="menu"
+					aria-expanded={menuOpen}
+				>
+					<div className="w-9 h-9 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-sm">
+						<User size={16} className="text-white" />
+					</div>
+					<span className="text-sm font-medium text-gray-900">Admin</span>
+					<ChevronDown size={16} className={`text-gray-600 transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
+				</button>
+
+				{menuOpen && <AdminPanel ref={menuRef} onLogout={handleLogout} />}
+			</div>
+		</header>
+	);
 }

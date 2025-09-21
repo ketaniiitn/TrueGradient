@@ -20,10 +20,10 @@ export default function SuggestionCards({ className = "", onSuggestionClick }) {
         <button
           key={suggestion.id}
           onClick={() => handleSuggestionClick(suggestion.text)}
-          className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all text-left group"
+          className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all text-left group"
         >
-          <MessageSquare size={18} className="text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
-          <span className="text-gray-700 group-hover:text-gray-900 text-sm">{suggestion.text}</span>
+          <MessageSquare size={18} className="text-black group-hover:text-blue-900 flex-shrink-0" />
+          <span className="text-black group-hover:text-blue-900 text-sm font-semibold">{suggestion.text}</span>
         </button>
       ))}
     </div>

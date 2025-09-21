@@ -33,9 +33,9 @@ export default function ChatDashboard() {
         {/* Chat Area */}
         <main className="flex-1 flex flex-col">
           {/* Welcome Content */}
-          <div className="flex-1 flex flex-col justify-center py-8">
-            <WelcomeArea className="mb-12" />
-            <SuggestionCards className="px-8" onSuggestionClick={handleSuggestionClick} />
+          <div className="flex-1 flex flex-col justify-center py-6">
+            <WelcomeArea className="mb-8" />
+            <SuggestionCards className="px-8 pb-6" onSuggestionClick={handleSuggestionClick} />
           </div>
 
           {/* Chat Input */}
