@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
+import os
 
 from config import get_config
 from extensions import init_extensions
@@ -9,9 +10,14 @@ from models.user import create_indexes
 
 def create_app():
     app = Flask(__name__)
-    # Permissive CORS for deployment: allow all origins and common methods.
-    # Be cautious: in production you may want to restrict origins and enable credentials safely.
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True, methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
+    # NOTE: credentials + wildcard origin is not allowed by browsers; if you later need cookies/auth headers
+    # replace "*" with an explicit list or regex of your frontend origins.
+    CORS(
+        app,
+        resources={r"/*": {"origins": "*"}},
+        supports_credentials=True,
+        methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+    )
 
     # Load configuration
     cfg = get_config()
@@ -27,7 +33,7 @@ def create_app():
     # Register blueprints
     app.register_blueprint(auth_bp)
 
-    # Basic routes
+    # Basic routes / health checks
     @app.route('/health', methods=['GET'])
     def health_check():
         return jsonify({
@@ -45,7 +51,10 @@ def create_app():
 
     return app
 
+# Expose a module-level app instance for WSGI servers (Gunicorn, etc.)
+app = create_app()
 
 if __name__ == '__main__':
-    application = create_app()
-    application.run(host='127.0.0.1', port=5000, debug=application.config.get('DEBUG', False))
+    # Local/dev execution fallback. In production (Render) use Gunicorn with: gunicorn app:app --bind 0.0.0.0:$PORT
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=app.config.get('DEBUG', False))
