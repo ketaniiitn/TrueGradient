@@ -98,6 +98,27 @@ export const apiService = {
       return !!token;
     },
   },
+  // Chat endpoints (placeholder implementation)
+  chat: {
+    sendMessage: async (content) => {
+      // Attempt real backend call if endpoint exists; fallback to mock answer
+      try {
+        const response = await api.post('/api/chat', { message: content });
+        return response.data; // expected shape: { id, role:'assistant', content, tokens }
+      } catch (error) {
+        // If 404 or network error, return a mocked assistant response so UI works
+        console.warn('Chat endpoint fallback (mock used):', error?.response?.status);
+        return new Promise((resolve) => {
+          setTimeout(() => resolve({
+            id: Date.now().toString(),
+            role: 'assistant',
+            content: `Mock response: You said "${content}"`,
+            tokens: Math.ceil(content.length / 4) + 5,
+          }), 600);
+        });
+      }
+    }
+  }
 };
 
 export default api;

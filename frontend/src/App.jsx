@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { selectIsAuthenticated } from './store/slices/authSlice'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
-import Dashboard from './pages/Dashboard'
+import ChatDashboard from './pages/ChatDashboard'
 import Test from './pages/Test'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -32,7 +32,7 @@ function App() {
           path="/dashboard" 
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <ChatDashboard />
             </ProtectedRoute>
           } 
         />
