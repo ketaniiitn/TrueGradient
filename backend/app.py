@@ -55,6 +55,7 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    # Local/dev execution fallback. In production (Render) use Gunicorn with: gunicorn app:app --bind 0.0.0.0:$PORT
-    port = int(os.environ.get('PORT', 5000))
+    # Local/dev execution fallback. In production use Gunicorn.
+    # Default port changed to 5001 for Docker / compose alignment.
+    port = int(os.environ.get('PORT', 5001))
     app.run(host='0.0.0.0', port=port, debug=app.config.get('DEBUG', False))

@@ -82,7 +82,7 @@ const ConnectionTest = () => {
 
           <div className="pt-6 text-xs text-gray-500 space-y-1">
             <p>
-              <span className="font-medium">Backend:</span> http://127.0.0.1:5000
+              <span className="font-medium">Backend:</span> http://127.0.0.1:5001
             </p>
             <p>
               <span className="font-medium">Frontend:</span> http://localhost:5174

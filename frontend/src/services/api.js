@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Prefer environment variable (defined at build time). Fallback to deployed backend.
-// During local dev create a .env file with: VITE_API_BASE_URL=http://127.0.0.1:5000
+// During local dev create a .env file with: VITE_API_BASE_URL=http://127.0.0.1:5001
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://truegradient.onrender.com';
 
 const api = axios.create({
