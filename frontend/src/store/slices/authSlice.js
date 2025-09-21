@@ -1,12 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiService } from '../../services/api';
+import { clearAll as clearChatAll } from './chatSlice';
 
 // Async thunks for authentication
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
-  async (credentials, { rejectWithValue }) => {
+  async (credentials, { rejectWithValue, dispatch }) => {
     try {
       const response = await apiService.auth.login(credentials);
+      // Fresh login: purge any previous chat state BEFORE future hydration
+      try { localStorage.removeItem('tg_chat_state_v1'); } catch (_) {}
+      dispatch(clearChatAll());
       return response;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -16,9 +20,12 @@ export const loginUser = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async (userData, { rejectWithValue }) => {
+  async (userData, { rejectWithValue, dispatch }) => {
     try {
       const response = await apiService.auth.register(userData);
+      // On new account creation also clear old chat state (paranoia if same device reused)
+      try { localStorage.removeItem('tg_chat_state_v1'); } catch (_) {}
+      dispatch(clearChatAll());
       return response;
     } catch (error) {
       return rejectWithValue(error.message);

@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, ChevronDown, User, Menu } from 'lucide-react';
-import { useDispatch } from 'react-redux';
+import { Coins, ChevronDown, User, Menu } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../store/slices/authSlice';
+import { selectChatCoins } from '../../store/slices/chatSlice';
 import NotificationsPanel from './NotificationsPanel';
 import AdminPanel from './AdminPanel';
 
 export default function Header({ className = '', onMobileMenuToggle, mobileMenuOpen }) {
+	const coins = useSelector(selectChatCoins);
 	const [menuOpen, setMenuOpen] = useState(false);
 	const menuRef = useRef(null);
 	const triggerRef = useRef(null);
@@ -56,10 +58,10 @@ export default function Header({ className = '', onMobileMenuToggle, mobileMenuO
 			</div>
 
 			<div className="flex items-center gap-3 sm:gap-4">
-				<div className="flex items-center gap-2 bg-blue-50 text-blue-600 rounded-full px-4 py-1.5 shadow-sm">
-					<Link size={18} strokeWidth={2} />
-					<span className="text-sm font-medium">1,250</span>
-				</div>
+						<div className="flex items-center gap-2 bg-blue-50 text-blue-600 rounded-full px-4 py-1.5 shadow-sm">
+							<Coins size={18} strokeWidth={2} />
+							<span className="text-sm font-medium">{coins}</span>
+						</div>
 
 				<NotificationsPanel />
 
