@@ -1,8 +1,18 @@
-import { Plus, ChevronLeft } from "lucide-react";
-import { useState } from "react";
+import { Plus, ChevronLeft, X } from "lucide-react";
+import { useState, useEffect } from "react";
 
-export default function Sidebar({ className = "" }) {
+export default function Sidebar({ className = "", mobile = false, open = false, onClose }) {
   const [collapsed, setCollapsed] = useState(false);
+
+  // Close on ESC when mobile drawer is open
+  useEffect(() => {
+    if (!mobile || !open) return;
+    const handler = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [mobile, open, onClose]);
 
   const conversations = [
     {
@@ -13,12 +23,28 @@ export default function Sidebar({ className = "" }) {
     },
   ]
 
+  const widthClass = collapsed ? 'w-19' : 'w-64';
+
   return (
     <aside
-      className={`bg-white border-r-2 border-gray-200 flex flex-col transition-all duration-200 ${className} ${
-        collapsed ? 'w-19' : 'w-64'
-      }`}
+      className={`bg-white border-r-2 border-gray-200 flex flex-col transition-all duration-200 ${widthClass} ${className} 
+      ${mobile ? `fixed inset-y-0 left-0 z-40 transform ${open ? 'translate-x-0' : '-translate-x-full'} shadow-lg md:relative md:translate-x-0` : ''}`}
+      aria-label="Sidebar navigation"
+      aria-hidden={mobile ? !open : false}
+      role="navigation"
     >
+      {/* Mobile close button overlay area */}
+      {mobile && (
+        <div className="absolute top-2 right-2 md:hidden">
+          <button
+            onClick={onClose}
+            aria-label="Close menu"
+            className="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <X size={18} />
+          </button>
+        </div>
+      )}
       {/* Header */}
   <div className={`relative flex items-center p-3 border-b border-gray-200 ${collapsed ? 'justify-center' : 'justify-between'}`}>
         <h2 className={`text-lg font-semibold text-gray-900 transition-opacity ${collapsed ? 'opacity-0 w-0' : 'opacity-100'}`}>
@@ -46,8 +72,8 @@ export default function Sidebar({ className = "" }) {
         </button>
       </div>
 
-      {/* Conversations List - allow wrapping and let outer page scroll instead of inner slider */}
-      <div className="flex-1">
+  {/* Conversations List - scrollable if overflow */}
+  <div className="flex-1 overflow-y-auto">
         {conversations.map((conversation) => (
           <div
             key={conversation.id}

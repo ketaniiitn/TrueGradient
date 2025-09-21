@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, ChevronDown, User } from 'lucide-react';
+import { Link, ChevronDown, User, Menu } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { logoutUser } from '../../store/slices/authSlice';
 import NotificationsPanel from './NotificationsPanel';
 import AdminPanel from './AdminPanel';
 
-export default function Header({ className = '' }) {
+export default function Header({ className = '', onMobileMenuToggle, mobileMenuOpen }) {
 	const [menuOpen, setMenuOpen] = useState(false);
 	const menuRef = useRef(null);
 	const triggerRef = useRef(null);
@@ -41,12 +41,21 @@ export default function Header({ className = '' }) {
 	};
 
 	return (
-		<header className={`flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 ${className}`}>
-			<div className="flex items-center">
+		<header className={`flex items-center justify-between px-4 sm:px-6 py-3 bg-white border-b border-gray-200 gap-4 ${className}`}>
+			<div className="flex items-center gap-3">
+				{/* Mobile menu button */}
+				<button
+					className="md:hidden p-2 rounded-md border border-gray-200 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+					aria-label="Toggle menu"
+					aria-expanded={mobileMenuOpen || false}
+					onClick={onMobileMenuToggle}
+				>
+					<Menu size={20} className="text-gray-700" />
+				</button>
 				<h1 className="text-lg font-semibold text-gray-900">AI Chat</h1>
 			</div>
 
-			<div className="flex items-center gap-4">
+			<div className="flex items-center gap-3 sm:gap-4">
 				<div className="flex items-center gap-2 bg-blue-50 text-blue-600 rounded-full px-4 py-1.5 shadow-sm">
 					<Link size={18} strokeWidth={2} />
 					<span className="text-sm font-medium">1,250</span>

@@ -9,6 +9,7 @@ import ChatInput from "../components/chat/ChatInput";
 
 export default function ChatDashboard() {
   const [messages, setMessages] = useState([])
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleSendMessage = (message) => {
     setMessages((prev) => [...prev, message])
@@ -21,25 +22,47 @@ export default function ChatDashboard() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+  <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <Header />
+      <Header
+        onMobileMenuToggle={() => setMobileMenuOpen(o => !o)}
+        mobileMenuOpen={mobileMenuOpen}
+      />
+
+      {/* Overlay for mobile menu */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-30 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <Sidebar />
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Sidebar desktop & mobile */}
+        <Sidebar
+          className="hidden md:flex"
+        />
+        <Sidebar
+          mobile
+          open={mobileMenuOpen}
+          onClose={() => setMobileMenuOpen(false)}
+          className="md:hidden"
+        />
 
         {/* Chat Area */}
         <main className="flex-1 flex flex-col">
-          {/* Welcome Content */}
-          <div className="flex-1 flex flex-col justify-center py-6">
-            <WelcomeArea className="mb-8" />
-            <SuggestionCards className="px-8 pb-6" onSuggestionClick={handleSuggestionClick} />
+          {/* Welcome Content / Messages placeholder */}
+          <div className="flex-1 flex flex-col py-6 px-4 sm:px-6 overflow-y-auto">
+            <div className="flex-1 flex flex-col items-center justify-center mb-8">
+              <WelcomeArea />
+            </div>
+            <SuggestionCards className="pb-6" onSuggestionClick={handleSuggestionClick} />
           </div>
 
           {/* Chat Input */}
-          <ChatInput onSendMessage={handleSendMessage} />
+            <ChatInput onSendMessage={handleSendMessage} />
         </main>
       </div>
     </div>

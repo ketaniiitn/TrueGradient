@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Improved focus outline for accessibility */
+:focus-visible {
+	outline: 2px solid theme('colors.blue.500');
+	outline-offset: 2px;
+}
+
+/* Dark mode scaffold (future) */
+@media (prefers-color-scheme: dark) {
+	body.dark-auto {
+		@apply bg-gray-900 text-gray-100;
+	}
+}
