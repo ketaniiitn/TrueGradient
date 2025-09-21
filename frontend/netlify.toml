@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  base = "."
+
+[build.environment]
+  NODE_VERSION = "22.19.0"
+
+# SPA fallback (alternative to _redirects file; both are fine, _redirects already present)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
